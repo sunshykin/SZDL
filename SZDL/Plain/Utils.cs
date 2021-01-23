@@ -172,19 +172,14 @@ namespace SZDL.Plain
             // вернуть "вероятно простое"
             return true;
         }
-
-        public static uint GetBitLength(BigInteger number)
+        public static byte[] ConcatBytes(byte[] source, byte[] nonce)
         {
-            var copy = new BigInteger(number.ToByteArray());
-            uint counter = 0;
+            var result = new byte[source.Length + nonce.Length];
 
-            while (copy > 1)
-            {
-                copy >>= 1;
-                counter++;
-            }
+            source.CopyTo(result, 0);
+            nonce.CopyTo(result, source.Length);
 
-            return counter;
+            return result;
         }
 
         public static BigInteger GetMinNumberExactBitLength(int bitLength)

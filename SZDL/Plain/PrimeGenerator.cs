@@ -134,7 +134,7 @@ namespace SZDL.Plain
 				do
 				{
 					checkingNumber *= accumulatingValue;
-				} while (Utils.GetBitLength(checkingNumber) < settings.KeyLengthNumber);
+				} while (checkingNumber.GetBitLength() < settings.KeyLengthNumber);
 
 				if (Utils.MillerRabinTest(checkingNumber + 1))
 				{

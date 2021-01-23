@@ -56,11 +56,17 @@ namespace SZDL.Plain
 
         public static Matrix operator*(Matrix a, Matrix b)
         {
-            return new Matrix(
+            /*return new Matrix(
                 (a[1].MultiplyMod(b[1]) + a[2].MultiplyMod(b[3])) % Static.P,
                 (a[1].MultiplyMod(b[2]) + a[2].MultiplyMod(b[4])) % Static.P,
                 (a[3].MultiplyMod(b[1]) + a[4].MultiplyMod(b[3])) % Static.P,
                 (a[3].MultiplyMod(b[2]) + a[4].MultiplyMod(b[4])) % Static.P
+            );*/
+            return new Matrix(
+                (a[1] * b[1] + a[2]* b[3]) % Static.P,
+                (a[1] * b[2] + a[2]* b[4]) % Static.P,
+                (a[3] * b[1] + a[4]* b[3]) % Static.P,
+                (a[3] * b[2] + a[4]* b[4]) % Static.P
             );
         }
 
@@ -95,6 +101,25 @@ namespace SZDL.Plain
             return builder.ToString();
         }
 
+        public byte[] ToBytes()
+        {
+            var bytes1 = this[1].ToByteArray();
+            var bytes2 = this[2].ToByteArray();
+            var bytes3 = this[3].ToByteArray();
+            var bytes4 = this[4].ToByteArray();
+            var length = bytes1.Length + bytes2.Length + bytes3.Length + bytes4.Length;
+
+
+            var result = new byte[length];
+
+            bytes1.CopyTo(result, 0);
+            bytes2.CopyTo(result, bytes1.Length);
+            bytes3.CopyTo(result, bytes1.Length + bytes2.Length);
+            bytes4.CopyTo(result, bytes1.Length + bytes2.Length + bytes3.Length);
+
+            return result;
+        }
+
         public bool IsInvertible()
         {
             return this[1].MultiplyMod(this[4]) != this[2].MultiplyMod(this[3]);
@@ -121,7 +146,7 @@ namespace SZDL.Plain
             if (exponent.IsZero)
                 return new Matrix(1, 0, 0, 1);
 
-            if (exponent % 2 == 1)
+            if (!exponent.IsEven)
                 return this * this.Pow(exponent - 1);
 
             var square = this.Pow(exponent / 2);

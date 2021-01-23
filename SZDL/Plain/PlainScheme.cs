@@ -143,7 +143,7 @@ namespace SZDL.Plain
         public static Signature Sign(SecretKey secretKey, string message)
         {
             var numberK = Utils.GenerateNumber().Mod(Static.Q - 2) + 2; // Crete 1 < k < q
-            Static.NumberK = numberK;
+            //Static.NumberK = numberK;
 
             /*Matrix part1 = secretKey.MatrixD.Pow(secretKey.NumberW).Inverse(),
                 part2 = secretKey.MatrixG.Pow(numberK),
@@ -160,7 +160,8 @@ namespace SZDL.Plain
 
             using (SHA512 shaM = new SHA512Managed())
             {
-                var bytes = Encoding.Unicode.GetBytes(message + matrixR.ToByteString());
+                //var bytes = Encoding.Unicode.GetBytes(message + matrixR.ToByteString());
+                var bytes = Utils.ConcatBytes(Encoding.Unicode.GetBytes(message), matrixR.ToBytes());
                 hash = shaM.ComputeHash(bytes);
             }
 
@@ -195,7 +196,8 @@ namespace SZDL.Plain
 
             using (SHA512 shaM = new SHA512Managed())
             {
-                var bytes = Encoding.Unicode.GetBytes(message + matrixRModed.ToByteString());
+                //var bytes = Encoding.Unicode.GetBytes(message + matrixRModed.ToByteString());
+                var bytes = Utils.ConcatBytes(Encoding.Unicode.GetBytes(message), matrixRModed.ToBytes());
                 hash = shaM.ComputeHash(bytes);
             }
 

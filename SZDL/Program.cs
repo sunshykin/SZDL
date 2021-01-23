@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Unicode;
+using System.Threading;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using SZDL.Plain;
@@ -22,35 +23,18 @@ namespace SZDL
     {
         static void Main(string[] args)
         {
-            var useBenchmark = false;
+            var mode = "benchmark";
+                       //"sign";
+                       //"compare";
 
-            if (useBenchmark)
+            if (mode == "benchmark")
             {
                 var summary = BenchmarkRunner.Run<TestCases>();
             }
-            else
+            else if (mode == "sign")
             {
-
-                /*Plain.Static.P = 11;
-                var g = new Matrix(2, 7, 6, 10);
-                var d = new Matrix(5, 10, 4, 10);
-                var u = new Matrix(8, 10, 8, 9);
-                var dInv = d.Inverse();
-
-
-                var left = (d * g * dInv).Pow(3);
-                var right = d * (g.Pow(3)) * dInv;
-
-                var (publicKey0, secretKey0) = PlainScheme.GenerateKeysManually(g, d, u, 4, 9, 10);
-                var sign0 = PlainScheme.Sign(secretKey0, "Hello");
-
-                Console.WriteLine(PlainScheme.Verify(publicKey0, sign0, "Hello"));
-
-
-                var test = 1;
-                */
                 int falseCounter = 0, trueCounter = 0;
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < 150; i++)
                 {
                     var (publicKey1, secretKey1) = PlainScheme.GenerateKeys();
                     var sign1 = PlainScheme.Sign(secretKey1, "Hello");
@@ -69,14 +53,18 @@ namespace SZDL
                 }
 
                 Console.WriteLine("True/False: {0}/{1}", trueCounter, falseCounter);
+            }
+            else if (mode == "compare")
+            {
+                var num1 = BigInteger.Parse("141562178236123719023182636512735127318231273816231730913");
+                var num2 = BigInteger.Parse("9573092321784619475983727739052210384891203183287482102384");
+                var modulus = BigInteger.Parse("69457109491271640540324213238132238195765914719571218");
+                Plain.Static.P = modulus;
+                var matr = Utils.GenerateMatrix();
 
-
-                /*var (publicKey, secretKey) = RingScheme.GenerateKeys();
-                var sign = RingScheme.Sign(secretKey, "Hello");
-
-                Console.WriteLine(RingScheme.Verify(publicKey, sign, "Hello"));
-                */
-                //Console.ReadKey();
+                for (int i = 0; i < 100000; i++)
+                {
+                }
             }
         }
     }
@@ -93,15 +81,6 @@ namespace SZDL
         public void UsePrimeNumberWithRNG()
         {
             Utils.GeneratePrimeNumberRNG();
-        }
-
-        //[Benchmark]
-        public void UsePlain()
-        {
-            var (publicKey, secretKey) = PlainScheme.GenerateKeys();
-            var sign = PlainScheme.Sign(secretKey, "Hello");
-
-            PlainScheme.Verify(publicKey, sign, "Hello");
         }
 
         [Benchmark]
