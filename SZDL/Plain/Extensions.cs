@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using SZDL.Plain;
 
 namespace SZDL.Plain
 {

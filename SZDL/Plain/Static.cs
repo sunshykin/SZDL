@@ -4,12 +4,10 @@ namespace SZDL.Plain
 {
     public static class Static
     {
-        public const int N = 384;
+        public const int N = 512;
         public static BigInteger P;
         public static BigInteger Q;
 
-
-        public static BigInteger NumberK;
         public static BigInteger NumberE;
 
         public static PrimeGenerator PrimeGenerator { get; set; } = new PrimeGenerator(new PrimeGeneratorSettings

@@ -1,20 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Net.WebSockets;
 using System.Numerics;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Unicode;
-using System.Threading;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using SZDL.Plain;
-using SZDL.Ring;
 using PublicKey = SZDL.Plain.PublicKey;
 using SecretKey = SZDL.Plain.SecretKey;
 using Signature = SZDL.Plain.Signature;
-using Static = SZDL.Ring.Static;
 using Utils = SZDL.Plain.Utils;
 
 namespace SZDL
@@ -71,18 +63,6 @@ namespace SZDL
 
     public class TestCases
     {
-        //[Benchmark]
-        public void UsePrimeNumberWithRandom()
-        {
-            Utils.GeneratePrimeNumber();
-        }
-
-        //[Benchmark]
-        public void UsePrimeNumberWithRNG()
-        {
-            Utils.GeneratePrimeNumberRNG();
-        }
-
         [Benchmark]
         public void UsePlainGenerateKeys()
         {
@@ -111,15 +91,6 @@ namespace SZDL
         public void UsePlainVerify(PublicKey publicKey, Signature signature)
         {
             PlainScheme.Verify(publicKey, signature, "Hello");
-        }
-
-        public void UseRing()
-        {
-            var (publicKey, secretKey) = RingScheme.GenerateKeys();
-            var sign = RingScheme.Sign(secretKey, "Hello");
-
-            RingScheme.Verify(publicKey, sign, "Hello");
-            //Console.WriteLine(RingScheme.Verify(publicKey, sign, "Hello"));
         }
     }
 }

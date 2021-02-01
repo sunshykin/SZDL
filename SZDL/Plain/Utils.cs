@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections;
-using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
-using System.Threading.Tasks;
-using SZDL.Plain;
 
 namespace SZDL.Plain
 {
@@ -23,37 +19,6 @@ namespace SZDL.Plain
         private static Random random = new Random((int)DateTime.Now.Ticks);
         private static RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
 
-        public static BigInteger GeneratePrimeNumber()
-        {
-            var bytes = new byte[Static.N / 8];
-            random.NextBytes(bytes);
-
-            var result = new BigInteger(bytes);
-
-            while (result <= 0 || !MillerRabinTest(result))
-            {
-                random.NextBytes(bytes);
-                result = new BigInteger(bytes);
-            }
-
-            return result;
-        }
-        public static BigInteger GeneratePrimeNumberRNG()
-        {
-            byte[] bytes = new byte[Static.N / 8];
-            rng.GetBytes(bytes);
-
-            var result = new BigInteger(bytes);
-
-            while (result <= 0 || !MillerRabinTest(result))
-            {
-                rng.GetBytes(bytes);
-                result = new BigInteger(bytes);
-            }
-
-            return result;
-        }
-        
         public static BigInteger GenerateNumber()
         {
             var bytes = new byte[Static.N / 2 / 8];
@@ -77,19 +42,6 @@ namespace SZDL.Plain
             BigInteger a1 = GenerateNumber(),
                 a2 = GenerateNumber(),
                 a3 = GenerateNumber();
-
-            /*while (a1.IsZero)
-            {
-                a1 = GenerateNumber();
-            }
-            while (a2.IsZero)
-            {
-                a2 = GenerateNumber();
-            }
-            while (a3.IsZero)
-            {
-                a3 = GenerateNumber();
-            }*/
 
             var a1Inverse = a1.ModInverse(Static.P);
             var a4 = a2.MultiplyMod(a3).MultiplyMod(a1Inverse);
@@ -140,13 +92,6 @@ namespace SZDL.Plain
                 _a = new byte[numberByteLength];
 
                 // выберем случайное целое число a в отрезке [2, n − 2]
-                //do
-                //{
-                //    rng.GetBytes(_a);
-                //    a = new BigInteger(_a);
-                //}
-                //while (a < 2 || a >= number - 2);
-
                 random.NextBytes(_a);
                 a = BigInteger.Abs(new BigInteger(_a)) % (number - 4) + 2;
 

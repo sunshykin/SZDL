@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using SZDL.Plain;
 
 namespace SZDL.Plain
 {
@@ -22,20 +19,6 @@ namespace SZDL.Plain
             internalMatrix[1, 0] = elem3;
             internalMatrix[1, 1] = elem4;
         }
-    /*public struct Matrix
-    {
-        private readonly BigInteger element1;
-        private readonly BigInteger element2;
-        private readonly BigInteger element3;
-        private readonly BigInteger element4;
-
-        public Matrix(BigInteger elem1, BigInteger elem2, BigInteger elem3, BigInteger elem4)
-        {
-            element1 = elem1;
-            element2 = elem2;
-            element3 = elem3;
-            element4 = elem4;
-        }*/
 
         public BigInteger this[int i]
         {
@@ -82,19 +65,6 @@ namespace SZDL.Plain
             return $"({this[1]}, {this[2]}), ({this[3]}, {this[4]})";
         }
 
-        public string ToByteString()
-        {
-            var builder = new StringBuilder();
-            builder.AppendJoin(null,
-                String.Join(null, this[1].ToByteArray().Select(bt => $"{bt:X2}")),
-                String.Join(null, this[2].ToByteArray().Select(bt => $"{bt:X2}")),
-                String.Join(null, this[3].ToByteArray().Select(bt => $"{bt:X2}")),
-                String.Join(null, this[4].ToByteArray().Select(bt => $"{bt:X2}"))
-            );
-
-            return builder.ToString();
-        }
-
         public byte[] ToBytes()
         {
             var bytes1 = this[1].ToByteArray();
@@ -126,10 +96,7 @@ namespace SZDL.Plain
 
         public BigInteger GetDeterminant()
         {
-            //return (this[1].MultiplyMod(this[4]) - this[2].MultiplyMod(this[3])).Mod();
-
             return (this[1] * this[4] - this[2] * this[3]) % Static.P;
-            //return (this[1].MultiplyMod(this[4]) - this[2].MultiplyMod(this[3])).Mod();
         }
 
         public Matrix Pow(BigInteger exponent)
@@ -137,7 +104,6 @@ namespace SZDL.Plain
             if (exponent < 0)
             {
                 exponent = exponent.Mod();
-                //return this.Inverse().Pow(-exponent);
             }
 
             if (exponent.IsOne)
@@ -151,37 +117,6 @@ namespace SZDL.Plain
             return square * square;
         }
 
-        /*public Matrix Pow(BigInteger exponent)
-        {
-            var internatExp = exponent;
-            if (internatExp < 0)
-            {
-                internatExp = exponent.Mod();
-                //return this.Inverse().Pow(-exponent);
-            }
-
-            return this.InternalPow(ref internatExp);
-        }
-        
-        public Matrix InternalPow(ref BigInteger exponent)
-        {
-            if (exponent.IsZero)
-                return new Matrix(1, 0, 0, 1);
-
-            if (exponent % 2 == 1)
-            {
-                exponent -= 1;
-                return this * this.InternalPow(ref exponent);
-            }
-            else
-            {
-                exponent /= 2;
-                var square = this.InternalPow(ref exponent);
-
-                return square * square;
-            }
-        }*/
-
         public Matrix Inverse()
         {
             var det = GetDeterminant();
@@ -193,12 +128,6 @@ namespace SZDL.Plain
                 this[3].Negate().MultiplyMod(detInverse),
                 this[1].MultiplyMod(detInverse)
             );
-        }
-
-        public bool IsUnit()
-        {
-            //return this[1] == 1 && this[2] == 0 && this[3] == 0 && this[4] == 1;
-            return this[1] == this[4] && this[2] == 0 && this[3] == 0 && this[1] != 0;
         }
     }
 }
