@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections;
+using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using SZDL.Plain;
 
 namespace SZDL.Plain
@@ -22,7 +25,7 @@ namespace SZDL.Plain
 
         public static BigInteger GeneratePrimeNumber()
         {
-            var bytes = new byte[512 / 8];
+            var bytes = new byte[Static.N / 8];
             random.NextBytes(bytes);
 
             var result = new BigInteger(bytes);
@@ -37,7 +40,7 @@ namespace SZDL.Plain
         }
         public static BigInteger GeneratePrimeNumberRNG()
         {
-            byte[] bytes = new byte[512 / 8];
+            byte[] bytes = new byte[Static.N / 8];
             rng.GetBytes(bytes);
 
             var result = new BigInteger(bytes);
@@ -53,7 +56,7 @@ namespace SZDL.Plain
         
         public static BigInteger GenerateNumber()
         {
-            var bytes = new byte[256 / 8];
+            var bytes = new byte[Static.N / 2 / 8];
             random.NextBytes(bytes);
 
             return new BigInteger(bytes).Mod();
@@ -117,6 +120,7 @@ namespace SZDL.Plain
 
             // представим n − 1 в виде (2^s)·t, где t нечётно, это можно сделать последовательным делением n - 1 на 2
             BigInteger t = number - 1;
+            var nMinusOne = number - 1;
 
             int s = 0;
 
@@ -125,53 +129,58 @@ namespace SZDL.Plain
                 t /= 2;
                 s += 1;
             }
+            
+            byte[] _a;
+            BigInteger a;
+            var numberByteLength = number.GetByteCount();
 
             // повторить k раз
             for (int i = 0; i < roundCount; i++)
             {
+                _a = new byte[numberByteLength];
+
                 // выберем случайное целое число a в отрезке [2, n − 2]
-                RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+                //do
+                //{
+                //    rng.GetBytes(_a);
+                //    a = new BigInteger(_a);
+                //}
+                //while (a < 2 || a >= number - 2);
 
-                byte[] _a = new byte[number.ToByteArray().LongLength];
-
-                BigInteger a;
-
-                do
-                {
-                    rng.GetBytes(_a);
-                    a = new BigInteger(_a);
-                }
-                while (a < 2 || a >= number - 2);
+                random.NextBytes(_a);
+                a = BigInteger.Abs(new BigInteger(_a)) % (number - 4) + 2;
 
                 // x ← a^t mod n, вычислим с помощью возведения в степень по модулю
                 BigInteger x = BigInteger.ModPow(a, t, number);
 
                 // если x == 1 или x == n − 1, то перейти на следующую итерацию цикла
-                if (x == 1 || x == number - 1)
+                if (x.IsOne || x == nMinusOne)
                     continue;
 
                 // повторить s − 1 раз
                 for (int r = 1; r < s; r++)
                 {
                     // x ← x^2 mod n
-                    x = BigInteger.ModPow(x, 2, number);
+                    x = (x * x) % number;
+                    //x = BigInteger.ModPow(x, 2, number);
 
                     // если x == 1, то вернуть "составное"
-                    if (x == 1)
+                    if (x.IsOne)
                         return false;
 
                     // если x == n − 1, то перейти на следующую итерацию внешнего цикла
-                    if (x == number - 1)
+                    if (x == nMinusOne)
                         break;
                 }
 
-                if (x != number - 1)
+                if (x != nMinusOne)
                     return false;
             }
 
             // вернуть "вероятно простое"
             return true;
         }
+        
         public static byte[] ConcatBytes(byte[] source, byte[] nonce)
         {
             var result = new byte[source.Length + nonce.Length];

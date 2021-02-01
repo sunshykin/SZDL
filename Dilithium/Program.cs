@@ -12,7 +12,7 @@ namespace Dilithium
         static void Main(string[] args)
         {
 
-            var useBenchmark = false;
+            var useBenchmark = true;
 
             if (useBenchmark)
             {
@@ -35,10 +35,12 @@ namespace Dilithium
 
     public class TestCases
     {
+        public static int DilithiumMode = 1;
+        
         [GlobalSetup]
         public void GlobalSetup()
         {
-            Scheme.SetUpMode(4);
+            Scheme.SetUpMode(DilithiumMode);
         }
         
         [Benchmark]
@@ -49,7 +51,7 @@ namespace Dilithium
 
         public IEnumerable<object> SignArgs()
         {
-            Scheme.SetUpMode(4);
+            Scheme.SetUpMode(DilithiumMode);
             yield return Scheme.GenerateKeys().Item2;
         }
 
@@ -62,7 +64,7 @@ namespace Dilithium
 
         public IEnumerable<object[]> VerifyArgs()
         {
-            Scheme.SetUpMode(4);
+            Scheme.SetUpMode(DilithiumMode);
             var keys = Scheme.GenerateKeys();
 
             yield return new object[] { keys.Item1, Scheme.Sign(keys.Item2, "Hello") };

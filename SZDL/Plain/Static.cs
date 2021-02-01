@@ -4,6 +4,7 @@ namespace SZDL.Plain
 {
     public static class Static
     {
+        public const int N = 384;
         public static BigInteger P;
         public static BigInteger Q;
 
@@ -13,7 +14,7 @@ namespace SZDL.Plain
 
         public static PrimeGenerator PrimeGenerator { get; set; } = new PrimeGenerator(new PrimeGeneratorSettings
         {
-            KeyLength = 512,
+            KeyLength = N,
             ParallelTaskCount = 5,
             NumbersInFactorization = new BigInteger[] { 2, 3, 7, 13, 31 },
             AccumulatingValue = 109,

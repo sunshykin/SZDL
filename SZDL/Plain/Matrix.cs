@@ -56,12 +56,6 @@ namespace SZDL.Plain
 
         public static Matrix operator*(Matrix a, Matrix b)
         {
-            /*return new Matrix(
-                (a[1].MultiplyMod(b[1]) + a[2].MultiplyMod(b[3])) % Static.P,
-                (a[1].MultiplyMod(b[2]) + a[2].MultiplyMod(b[4])) % Static.P,
-                (a[3].MultiplyMod(b[1]) + a[4].MultiplyMod(b[3])) % Static.P,
-                (a[3].MultiplyMod(b[2]) + a[4].MultiplyMod(b[4])) % Static.P
-            );*/
             return new Matrix(
                 (a[1] * b[1] + a[2]* b[3]) % Static.P,
                 (a[1] * b[2] + a[2]* b[4]) % Static.P,
@@ -132,7 +126,10 @@ namespace SZDL.Plain
 
         public BigInteger GetDeterminant()
         {
-            return (this[1].MultiplyMod(this[4]) - this[2].MultiplyMod(this[3])).Mod();
+            //return (this[1].MultiplyMod(this[4]) - this[2].MultiplyMod(this[3])).Mod();
+
+            return (this[1] * this[4] - this[2] * this[3]) % Static.P;
+            //return (this[1].MultiplyMod(this[4]) - this[2].MultiplyMod(this[3])).Mod();
         }
 
         public Matrix Pow(BigInteger exponent)
@@ -142,9 +139,9 @@ namespace SZDL.Plain
                 exponent = exponent.Mod();
                 //return this.Inverse().Pow(-exponent);
             }
-            
-            if (exponent.IsZero)
-                return new Matrix(1, 0, 0, 1);
+
+            if (exponent.IsOne)
+                return this;
 
             if (!exponent.IsEven)
                 return this * this.Pow(exponent - 1);
